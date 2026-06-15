@@ -10,38 +10,44 @@ if 'selected_topic' not in st.session_state:
 # ================= সাইডবার (Control Panel) =================
 st.sidebar.title("🎛️ Physics Panel")
 
-# ১. ক্লাস বা কোর্স সিলেক্ট করা
-category = st.sidebar.selectbox("Class / Target:", ["Class 10 (CBSE)", "Class 11 (CBSE)", "Class 12 (CBSE)", "JEE Main/Adv", "NEET"])
+# ১. প্রধান ক্যাটাগরি বা টার্গেট সিলেক্ট করা
+category = st.sidebar.selectbox("Target / Exam:", ["Class 10 (CBSE)", "JEE Main & Advanced", "NEET"])
 
-# ২. সিলেক্ট করা ক্লাসের ওপর ভিত্তি করে চ্যাপ্টারগুলো দেখানো
+# ২. সাব-ক্যাটাগরি (Class 11 বা Class 12) এবং চ্যাপ্টার সিলেক্ট করা
 chapters = []
+selected_class_label = category # ডিফল্ট লেবেল
+
 if category == "Class 10 (CBSE)":
     chapters = ["Electricity", "Magnetic Effects of Electric Current", "Light - Reflection & Refraction", "The Human Eye"]
-elif category == "Class 11 (CBSE)":
-    chapters = ["Kinematics", "Laws of Motion", "Work, Energy and Power", "Gravitation"]
-elif category == "Class 12 (CBSE)":
-    chapters = ["Electrostatics", "Current Electricity", "Magnetism", "Optics"]
 else:
-    chapters = ["Syllabus Update in Progress..."]
+    # JEE বা NEET সিলেক্ট করলে Class 11 এবং Class 12 এর ড্রপডাউন আসবে
+    sub_class = st.sidebar.selectbox("Select Class:", ["Class 11", "Class 12"])
+    selected_class_label = f"{category} - {sub_class}"
+    
+    if sub_class == "Class 11":
+        chapters = ["Kinematics", "Laws of Motion", "Work, Energy and Power", "Gravitation"]
+    elif sub_class == "Class 12":
+        chapters = ["Electrostatics", "Current Electricity", "Magnetism", "Optics"]
 
+# ৩. চ্যাপ্টার সিলেক্ট করা
 chapter = st.sidebar.selectbox("Select Chapter:", chapters)
 
-# যদি সাইডবার থেকে চ্যাপ্টার পরিবর্তন করা হয়, তবে বক্সের পেজে ফিরে আসার জন্য
+# Refresh বাটন
 if st.sidebar.button("🔄 Refresh / Home"):
     st.session_state.selected_topic = None
     st.rerun()
 
 # ================= মূল পেজ (Home Page / Box Grid) =================
 
-# যদি কোনো বক্সে ক্লিক না হয়ে থাকে, তবে ফ্লিপকার্টের মতো বক্সগুলো দেখাবে
+# যদি কোনো বক্সে ক্লিক না হয়ে থাকে, তবে বক্সগুলো দেখাবে
 if st.session_state.selected_topic is None:
-    st.title(f"📚 {category}")
+    st.title(f"📚 {selected_class_label}")
     st.subheader(f"Chapter: {chapter}")
     st.markdown("নিচের যেকোনো টপিক বক্সে ক্লিক করে বিস্তারিত ল্যাব, থিওরি এবং থ্রিডি সিমুলেশন দেখো:")
     st.divider()
 
-    # Class 10 এর চ্যাপ্টার অনুযায়ী বক্স তৈরি (ফ্লিপকার্ট স্টাইল)
-    if chapter == "Electricity":
+    # Class 10 এর চ্যাপ্টার অনুযায়ী বক্স তৈরি
+    if chapter == "Electricity" and category == "Class 10 (CBSE)":
         col1, col2, col3 = st.columns(3)
         
         with col1:
@@ -56,7 +62,7 @@ if st.session_state.selected_topic is None:
             with st.container(border=True):
                 st.subheader("⚡ Resistance")
                 st.write("রোধের সমবায় (Series & Parallel)।")
-                st.button("Coming Soon...", disabled=True) # এটি পরে তৈরি করা হবে
+                st.button("Coming Soon...", disabled=True)
                 
         with col3:
             with st.container(border=True):
@@ -64,7 +70,7 @@ if st.session_state.selected_topic is None:
                 st.write("তড়িৎপ্রবাহের তাপীয় ফল।")
                 st.button("Coming Soon...", key="btn_joule", disabled=True)
 
-    elif chapter == "Magnetic Effects of Electric Current":
+    elif chapter == "Magnetic Effects of Electric Current" and category == "Class 10 (CBSE)":
         col1, col2, col3 = st.columns(3)
         
         with col1:
@@ -75,7 +81,7 @@ if st.session_state.selected_topic is None:
                     st.session_state.selected_topic = "Magnetic Field (Helix)"
                     st.rerun()
 
-    elif chapter == "Light - Reflection & Refraction":
+    elif chapter == "Light - Reflection & Refraction" and category == "Class 10 (CBSE)":
         col1, col2, col3 = st.columns(3)
         
         with col1:
@@ -90,7 +96,7 @@ if st.session_state.selected_topic is None:
         st.info("এই চ্যাপ্টারের ল্যাবগুলো খুব তাড়াতাড়ি যুক্ত করা হবে!")
 
 # ================= ল্যাব পেজ (Lab Page) =================
-# যদি বক্সে ক্লিক করা হয়ে থাকে, তবে সেই নির্দিষ্ট ল্যাবটি খুলবে
+# যদি বক্সে ক্লিক করা হয়ে থাকে
 else:
     # ফিরে যাওয়ার বাটন
     if st.button("⬅️ Back to Topics Grid"):
