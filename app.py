@@ -1,7 +1,7 @@
 import streamlit as st
 
 # ওয়েবসাইটের পেজ কনফিগারেশন
-st.set_page_config(page_title="SimuLab - Virtual Physics", page_icon="logo.jpg", layout="wide")
+st.set_page_config(page_title="SimuLab - Virtual Physics", page_icon="logo.jpeg", layout="wide")
 
 # Session State তৈরি করা (কোন বক্সে ক্লিক হয়েছে তা মনে রাখার জন্য)
 if 'selected_topic' not in st.session_state:
